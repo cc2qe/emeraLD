@@ -317,13 +317,13 @@ int main (int argc, char *argv[]){
 		}
 	}
 	
-	if( !fopts.phased ){
-		unit = "individuals";
-		if( extrastats ){
-			cerr << "\nERROR: --nophase (genotype LD) cannot be used with --dstats \n";
-			return 1;
-		}
-	}
+	// if( !fopts.phased ){
+	// 	unit = "individuals";
+	// 	if( extrastats ){
+	// 		cerr << "\nERROR: --nophase (genotype LD) cannot be used with --dstats \n";
+	// 		return 1;
+	// 	}
+	// }
 	
 	if( fopts.one_vs_all ){
 		

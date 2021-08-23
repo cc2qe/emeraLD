@@ -160,6 +160,10 @@ void corr_between (double &R, double &D, double &DPRIME, int i, int j, gdata& GD
 void corr_unph (double &R, double &D, double &DPRIME, int i, int j, gdata& GDATA) {
 	double maf_1 = 0.5*GDATA.p_gts[i].p1 + GDATA.p_gts[i].p2;
 	double maf_2 = 0.5*GDATA.p_gts[j].p1 + GDATA.p_gts[j].p2;
+
+	// fprintf (outf, "%s\t", sinfo.chr[i].c_str());
+	// cout << "hi " << maf_1 << " " << maf_2 << endl;
+
 	maf_1 = (maf_1 <= 0.5 ? maf_1 : 1 - maf_1);
 	maf_2 = (maf_2 <= 0.5 ? maf_2 : 1 - maf_2);
 	if( filter(maf_1, maf_2) ){
@@ -201,7 +205,9 @@ void corr_unph (double &R, double &D, double &DPRIME, int i, int j, gdata& GDATA
 	}
 	D = GDATA.p_gts[i].p1*EGj_k1 + 2*GDATA.p_gts[i].p2*EGj_k2 - 4*p_i*p_j;
 	D *= GDATA.dir[i]*GDATA.dir[j];
-	R = D / ( s_i * s_j ); 
+	R = D / ( s_i * s_j );
+
+	D = R * sqrt( maf_1 * (1-maf_1) * maf_2 * (1-maf_2) );
 }
 
 void getCorr(double &r, double &d, double &dprime, int i, int j, gdata& gdat, hdata& hdat){
