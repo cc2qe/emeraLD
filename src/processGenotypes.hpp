@@ -140,6 +140,7 @@ class foptions
 	int no_indels;
 	int region_mode;
 	int one_vs_all;
+	int many_vs_all;
 	int phased;
 	int force_phased;
 	int m_pad;
