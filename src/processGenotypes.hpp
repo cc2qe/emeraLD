@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <random>
 #include <unordered_set>
+#include <map>
 
 #include "tabixpp/tabix.hpp"
 #include "boost/dynamic_bitset.hpp"
@@ -59,6 +60,7 @@ class idata
 {
 	public:
 	unordered_set<string> ids;
+	unordered_set<string> snps;
 	haploVec kcols;
 	bool filter_mode;
 	bool keep_mode;
@@ -66,6 +68,7 @@ class idata
 	bool keep(int);
 	bool process(string&);
 	void open(string&, bool);
+	void open_snps(string&, bool);
 };
 
 class targetinfo
@@ -160,7 +163,8 @@ string asRegion (string chr, int pos, int end);
 string asRegion (string chr, string pos, string end);
 targetinfo parseEpactsVariant(std::string& variant);
 
-int read_tabixed_vcf(string &vcf_path, targetinfo &target, gdata &gdat, snpinfo &sinfo, idata &idat, int &n_haps, int &ph);
+// int read_tabixed_vcf(string &vcf_path, targetinfo &target, gdata &gdat, snpinfo &sinfo, idata &idat, int &n_haps, int &ph);
+int read_tabixed_vcf(string &vcf_path, vector<targetinfo> &target_vec, targetinfo &target, gdata &gdat, snpinfo &sinfo, idata &idat, int &n_haps, int &ph);
 
 int read_tabixed_m3vcf(string &m3vcf_path, targetinfo &target, gdata &gdat, snpinfo &sinfo, idata &idat, hdata &hdat, int &n_haps);
 

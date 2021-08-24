@@ -5,6 +5,8 @@
 #include <getopt.h>
 #include <vector>
 #include <random>
+#include <map> // delete?
+#include <list>
 
 using namespace std;
 
@@ -55,6 +57,9 @@ int main (int argc, char *argv[]){
 	
 	snpinfo sinfo;
 	targetinfo target;
+	vector<targetinfo> target_vec;
+	// std::map<std::string, targetinfo> targetmap;
+
 	gdata gdat;
 	hdata hdat;
 	
@@ -80,6 +85,7 @@ int main (int argc, char *argv[]){
 	fopts.many_vs_all = 0;
 
 	string snpfile = "";
+	std::list<std::string> snplist;
 	
 	string keepfile = "";
 	string exclfile = "";
@@ -202,6 +208,14 @@ int main (int argc, char *argv[]){
 	else if (target.epacts != "") {
 		target = parseEpactsVariant(target.epacts);
 	}
+
+	if (snpfile !="" ){
+	        idat.open_snps(snpfile, true);
+		cout << idat.snps.size() << endl;
+		// for (int i = 0; i<idat.snps.size(); ++i) {
+		//   cout << i << endl;
+		// }
+	}
 	
 	if( keepfile != "" ){
 		if( exclfile != "" ){
@@ -309,7 +323,7 @@ int main (int argc, char *argv[]){
 		if( !fopts.phased ){
 			cerr << "\nassuming unphased data (reporting diploid genotype LD)...\n";
 		}
-		if( read_tabixed_vcf(infile, target, gdat, sinfo, idat, n_haps, fopts.phased) > 0 ){
+		if( read_tabixed_vcf(infile, target_vec, target, gdat, sinfo, idat, n_haps, fopts.phased) > 0 ){
 			cerr << "\nERROR: check vcf file " << infile << "\n";
 			return 1;
 		}
@@ -407,8 +421,52 @@ int main (int argc, char *argv[]){
 				}
 			}
 		}
+	}
+
+	else if( fopts.many_vs_all ){
 		
-	}else if( matrix_out ){
+		if( extra ){
+			fprintf (outf, "#CHR\tPOS1\tRSID1\tREF:ALT1\tPOS2\tRSID2\tREF:ALT2\t");
+		}else{
+			fprintf (outf, "#CHR\tPOS1\tPOS2\t");
+		}
+		if( extrastats ){
+			fprintf(outf, "R\tRsq\tD\tDprime\n");
+		}else{
+			fprintf(outf, "R\tRsq\n");
+		}
+		
+		for (int i = 0; i < sinfo.size(); i++) {
+		  for(std::vector<targetinfo>::iterator it = target_vec.begin(); it != target_vec.end(); ++it) {
+                        bool not_target = sinfo.pos[i] != target.pos && sinfo.ref[i] != target.ref && sinfo.alt[i] != target.alt; // don't check the target against itself
+			if( abs(target.pos - sinfo.pos[i]) < max_dist && not_target){
+				getCorr(r, d, dprime, i, it->index, gdat, hdat);
+				if(  abs(r) > min_print  ){
+					if( extra ){
+						//fprintf (outf,"%u\t", sinfo.chr[i]);
+						fprintf (outf,"%s\t", sinfo.chr[i].c_str());
+						fprintf (outf,"%u\t", target.pos);
+						string outl = target.rsid + "\t" + target.ref + ":" + target.alt + "\t";
+						fprintf (outf,"%s",outl.c_str());
+						fprintf (outf,"%u\t", sinfo.pos[i]);
+						outl = sinfo.rsid[i] + "\t" + sinfo.ref[i] + ":" + sinfo.alt[i] + "\t";
+						fprintf (outf,"%s",outl.c_str());
+					}else{
+						//fprintf (outf,"%u\t%u\t%u\t",sinfo.chr[i], target.pos, sinfo.pos[i]);
+						fprintf (outf,"%s\t%u\t%u\t",sinfo.chr[i].c_str(), target.pos, sinfo.pos[i]);
+					}
+					if( extrastats ){
+						fprintf (outf,"%.5f\t%.5f\t%.5f\t%.5f\n", r, pow(r,2), d, dprime );
+					}else{
+						fprintf (outf,"%.5f\t%.5f\n", r, pow(r,2) );
+					}
+				}
+			}
+		  }
+		}
+	}
+		
+	else if( matrix_out ){
 		int last_i = 0;
 		int last_j = 0;
 		for (int i = 0; i < sinfo.size(); i++) {

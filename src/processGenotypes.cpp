@@ -1,5 +1,7 @@
 #include "processGenotypes.hpp"
 #include <regex>
+#include <map> // maybe can delete
+#include <list>
 using namespace std;
 
 foptions fopts;
@@ -337,9 +339,10 @@ bool idata::process(string& input){
 	for(int i = 0; i < 9; i++){
 		iss >> id;
 	}
-	//		//cout << "Processing VCF IIDs ... \n";
+
+	// cout << "Processing VCF IIDs ... \n";
 	while(iss >> id){
-		////cout << "\t" << id << "\t" << keep(id) << "\n";
+		// cout << "\t" << id << "\t" << keep(id) << "\n";
 		bool kp = keep(id);
 		if(kp){
 			N_SS++;
@@ -407,6 +410,23 @@ void idata::open(string& idpath, bool kmode){
 	}
 }
 
+void idata::open_snps(string& snppath, bool kmode) {
+        if(snppath == ""){
+                filter_mode = false;
+	}else{
+                filter_mode = true;
+		keep_mode = kmode;
+		ifstream snpfile(snppath);
+		cout << "Processing SNP file ... \n";
+		string snp;
+		while( snpfile >> snp ){
+			cout << "\t" << snp << "\n";
+			snps.insert(snp);
+		}
+		snpfile.close();
+	}
+}
+
 vector<string> getRegion (string str){
 	vector<string> v ;
 	size_t prev_pos = 0, pos;
@@ -461,7 +481,8 @@ targetinfo parseEpactsVariant(std::string& variant) {
 	return t;
 }
 
-int read_tabixed_vcf(string &vcf_path, targetinfo &target, gdata &gdat, snpinfo &sinfo, idata &idat, int &n_haps, int& ph){
+// int read_tabixed_vcf(string &vcf_path, targetinfo &target, gdata &gdat, snpinfo &sinfo, idata &idat, int &n_haps, int& ph){
+int read_tabixed_vcf(string &vcf_path, vector<targetinfo> &target_vec, targetinfo &target, gdata &gdat, snpinfo &sinfo, idata &idat, int &n_haps, int& ph){
 	
 	Tabix tfile(vcf_path);
 	
@@ -558,6 +579,43 @@ int read_tabixed_vcf(string &vcf_path, targetinfo &target, gdata &gdat, snpinfo 
 							target.index = k;
 						}
 					}
+
+					if( target.matches > 1 ){
+						cerr << "\nERROR: found duplicate target.matches for target SNP " << chr << ":" << pos << " (rsid " << rsid <<")\n";
+						return 1;
+					}
+				}
+
+				if( fopts.many_vs_all ){
+				        if (idat.snps.count(chr + ":" + std::to_string(pos)) > 0) {
+					        cout << "this " +  chr + ":" + std::to_string(pos) << endl;
+
+						target.index = k;
+						target_vec.emplace_back(target);
+                                        }
+					// if (target.epacts != "") {
+					// 	// User specified a specific chr:pos_ref/alt and we want to match only against it.
+					// 	if (pos == target.pos && ref == target.ref && alt == target.alt) {
+					// 		target.matches++;
+					// 		target.index = k;
+					// 		target.rsid = rsid;
+					// 	}
+					// }
+					// else {
+					// 	// We have to match against rsid or just plain position in this case.
+					// 	if( rsid == target.rsid || pos == target.pos ){
+					// 		target.matches++;
+					// 		target.ref = ref;
+					// 		target.alt = alt;
+					// 		if(target.rsid == ""){
+					// 			target.rsid = rsid;
+					// 		}
+					// 		if( target.pos < 0 ){
+					// 			target.pos = pos;
+					// 		}
+					// 		target.index = k;
+					// 	}
+					// }
 
 					if( target.matches > 1 ){
 						cerr << "\nERROR: found duplicate target.matches for target SNP " << chr << ":" << pos << " (rsid " << rsid <<")\n";
@@ -782,6 +840,24 @@ int read_tabixed_m3vcf(string &m3vcf_path, targetinfo &target, gdata &gdat, snpi
 				//	    observed.insert({rsid, true});
 				if( begun > 0 && ( !fopts.region_mode || (pos >= r_start && pos <= r_end && chr == r_chr) ) ){
 					if( fopts.one_vs_all ){
+						if( rsid == target.rsid || pos == target.pos ){
+							target.matches++;
+							target.ref = ref;
+							target.alt = alt;
+							if(target.rsid == ""){
+								target.rsid = rsid;
+							}
+							if( target.pos < 0 ){
+								target.pos = pos;
+							}
+							target.index = k;
+							if( target.matches > 1 ){
+								cerr << "\nERROR: found duplicate target.matches for target SNP " << chr << ":" << pos << " (rsid " << rsid <<")\n";
+								return 1;
+							}
+						}
+					}
+					if( fopts.many_vs_all ){
 						if( rsid == target.rsid || pos == target.pos ){
 							target.matches++;
 							target.ref = ref;
