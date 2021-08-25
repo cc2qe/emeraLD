@@ -211,7 +211,7 @@ int main (int argc, char *argv[]){
 
 	if (snpfile !="" ){
 	        idat.open_snps(snpfile, true);
-		cout << idat.snps.size() << endl;
+		// cout << idat.snps.size() << endl;
 		// for (int i = 0; i<idat.snps.size(); ++i) {
 		//   cout << i << endl;
 		// }
@@ -437,23 +437,26 @@ int main (int argc, char *argv[]){
 		}
 		
 		for (int i = 0; i < sinfo.size(); i++) {
-		  for(std::vector<targetinfo>::iterator it = target_vec.begin(); it != target_vec.end(); ++it) {
+		  // for(std::vector<targetinfo>::iterator it = target_vec.begin(); it != target_vec.end(); ++it) {
+		  for(auto it = target_vec.begin(); it < target_vec.end(); ++it ) {
                         bool not_target = sinfo.pos[i] != target.pos && sinfo.ref[i] != target.ref && sinfo.alt[i] != target.alt; // don't check the target against itself
-			if( abs(target.pos - sinfo.pos[i]) < max_dist && not_target){
+			if( abs(it->pos - sinfo.pos[i]) < max_dist && not_target){
+			        // cout << it->chr + " " + std::to_string(it->pos) + " " + std::to_string(it->index) << endl;
+
 				getCorr(r, d, dprime, i, it->index, gdat, hdat);
 				if(  abs(r) > min_print  ){
 					if( extra ){
 						//fprintf (outf,"%u\t", sinfo.chr[i]);
 						fprintf (outf,"%s\t", sinfo.chr[i].c_str());
-						fprintf (outf,"%u\t", target.pos);
-						string outl = target.rsid + "\t" + target.ref + ":" + target.alt + "\t";
+						fprintf (outf,"%u\t", it->pos);
+						string outl = it->rsid + "\t" + it->ref + ":" + it->alt + "\t";
 						fprintf (outf,"%s",outl.c_str());
 						fprintf (outf,"%u\t", sinfo.pos[i]);
 						outl = sinfo.rsid[i] + "\t" + sinfo.ref[i] + ":" + sinfo.alt[i] + "\t";
 						fprintf (outf,"%s",outl.c_str());
 					}else{
 						//fprintf (outf,"%u\t%u\t%u\t",sinfo.chr[i], target.pos, sinfo.pos[i]);
-						fprintf (outf,"%s\t%u\t%u\t",sinfo.chr[i].c_str(), target.pos, sinfo.pos[i]);
+						fprintf (outf,"%s\t%u\t%u\t",sinfo.chr[i].c_str(), it->pos, sinfo.pos[i]);
 					}
 					if( extrastats ){
 						fprintf (outf,"%.5f\t%.5f\t%.5f\t%.5f\n", r, pow(r,2), d, dprime );

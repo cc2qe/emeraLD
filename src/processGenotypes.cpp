@@ -417,10 +417,10 @@ void idata::open_snps(string& snppath, bool kmode) {
                 filter_mode = true;
 		keep_mode = kmode;
 		ifstream snpfile(snppath);
-		cout << "Processing SNP file ... \n";
+		// cout << "Processing SNP file ... \n";
 		string snp;
 		while( snpfile >> snp ){
-			cout << "\t" << snp << "\n";
+			// cout << "\t" << snp << "\n";
 			snps.insert(snp);
 		}
 		snpfile.close();
@@ -588,34 +588,16 @@ int read_tabixed_vcf(string &vcf_path, vector<targetinfo> &target_vec, targetinf
 
 				if( fopts.many_vs_all ){
 				        if (idat.snps.count(chr + ":" + std::to_string(pos)) > 0) {
-					        cout << "this " +  chr + ":" + std::to_string(pos) << endl;
+					        // cout << "read in: " +  chr + ":" + std::to_string(pos) + " " + std::to_string(k) << endl;
+						target.chr = chr;
+						target.ref = ref;
+						target.alt = alt;
+						target.rsid = rsid;
+					        target.pos = pos;
 
 						target.index = k;
 						target_vec.emplace_back(target);
-                                        }
-					// if (target.epacts != "") {
-					// 	// User specified a specific chr:pos_ref/alt and we want to match only against it.
-					// 	if (pos == target.pos && ref == target.ref && alt == target.alt) {
-					// 		target.matches++;
-					// 		target.index = k;
-					// 		target.rsid = rsid;
-					// 	}
-					// }
-					// else {
-					// 	// We have to match against rsid or just plain position in this case.
-					// 	if( rsid == target.rsid || pos == target.pos ){
-					// 		target.matches++;
-					// 		target.ref = ref;
-					// 		target.alt = alt;
-					// 		if(target.rsid == ""){
-					// 			target.rsid = rsid;
-					// 		}
-					// 		if( target.pos < 0 ){
-					// 			target.pos = pos;
-					// 		}
-					// 		target.index = k;
-					// 	}
-					// }
+					}
 
 					if( target.matches > 1 ){
 						cerr << "\nERROR: found duplicate target.matches for target SNP " << chr << ":" << pos << " (rsid " << rsid <<")\n";
