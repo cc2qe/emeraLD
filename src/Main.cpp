@@ -5,7 +5,6 @@
 #include <getopt.h>
 #include <vector>
 #include <random>
-#include <map> // delete?
 #include <list>
 
 using namespace std;
@@ -212,7 +211,7 @@ int main (int argc, char *argv[]){
 	if (snpfile !="" ){
 	        idat.open_snps(snpfile, true);
 		// cout << idat.snps.size() << endl;
-		// for (int i = 0; i<idat.snps.size(); ++i) {
+		// for (int i = 0; i<idat.snps.size(); i++) {
 		//   cout << i << endl;
 		// }
 	}
@@ -437,12 +436,10 @@ int main (int argc, char *argv[]){
 		}
 		
 		for (int i = 0; i < sinfo.size(); i++) {
-		  // for(std::vector<targetinfo>::iterator it = target_vec.begin(); it != target_vec.end(); ++it) {
 		  for(auto it = target_vec.begin(); it < target_vec.end(); ++it ) {
-                        bool not_target = sinfo.pos[i] != target.pos && sinfo.ref[i] != target.ref && sinfo.alt[i] != target.alt; // don't check the target against itself
+                        bool not_target = sinfo.pos[i] != it->pos && sinfo.ref[i] != it->ref && sinfo.alt[i] != it->alt; // don't check the target against itself
 			if( abs(it->pos - sinfo.pos[i]) < max_dist && not_target){
-			        // cout << it->chr + " " + std::to_string(it->pos) + " " + std::to_string(it->index) << endl;
-
+	                        // cout << it->chr + " " + std::to_string(it->pos) + " " + std::to_string(it->index) << " " << std::to_string(sinfo.pos[i]) << " " << std::to_string(not_target) << endl;
 				getCorr(r, d, dprime, i, it->index, gdat, hdat);
 				if(  abs(r) > min_print  ){
 					if( extra ){

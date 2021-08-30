@@ -586,6 +586,9 @@ int read_tabixed_vcf(string &vcf_path, vector<targetinfo> &target_vec, targetinf
 					}
 				}
 
+				// for (auto i = idat.snps.begin(); i != idat.snps.end(); ++i) {
+				//   std::cout << (*i) << std::endl;
+				// }
 				if( fopts.many_vs_all ){
 				        if (idat.snps.count(chr + ":" + std::to_string(pos)) > 0) {
 					        // cout << "read in: " +  chr + ":" + std::to_string(pos) + " " + std::to_string(k) << endl;
@@ -597,6 +600,7 @@ int read_tabixed_vcf(string &vcf_path, vector<targetinfo> &target_vec, targetinf
 
 						target.index = k;
 						target_vec.emplace_back(target);
+						cerr << "vec size is: " << std::to_string(target_vec.size()) << " ; " << std::to_string(pos) << endl;
 					}
 
 					if( target.matches > 1 ){
