@@ -600,7 +600,7 @@ int read_tabixed_vcf(string &vcf_path, vector<targetinfo> &target_vec, targetinf
 
 						target.index = k;
 						target_vec.emplace_back(target);
-						cerr << "vec size is: " << std::to_string(target_vec.size()) << " ; " << std::to_string(pos) << endl;
+						// cerr << "vec size is: " << std::to_string(target_vec.size()) << " ; " << std::to_string(pos) << endl;
 					}
 
 					if( target.matches > 1 ){
