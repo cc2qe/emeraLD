@@ -420,7 +420,7 @@ void idata::open_snps(string& snppath, bool kmode) {
 		// cout << "Processing SNP file ... \n";
 		string snp;
 		while( snpfile >> snp ){
-			cout << "\t" << snp << "\n";
+			// cout << "\t" << snp << "\n";
 			snps.insert(snp);
 		}
 		snpfile.close();
