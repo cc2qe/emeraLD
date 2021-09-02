@@ -420,7 +420,7 @@ void idata::open_snps(string& snppath, bool kmode) {
 		// cout << "Processing SNP file ... \n";
 		string snp;
 		while( snpfile >> snp ){
-			// cout << "\t" << snp << "\n";
+			cout << "\t" << snp << "\n";
 			snps.insert(snp);
 		}
 		snpfile.close();
@@ -590,7 +590,7 @@ int read_tabixed_vcf(string &vcf_path, vector<targetinfo> &target_vec, targetinf
 				//   std::cout << (*i) << std::endl;
 				// }
 				if( fopts.many_vs_all ){
-				        if (idat.snps.count(chr + ":" + std::to_string(pos)) > 0) {
+				        if (idat.snps.count(chr + ":" + std::to_string(pos) + "_" + ref + "/" + alt) > 0) {
 					        // cout << "read in: " +  chr + ":" + std::to_string(pos) + " " + std::to_string(k) << endl;
 						target.chr = chr;
 						target.ref = ref;

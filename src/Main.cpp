@@ -28,7 +28,7 @@ void print_usage() {
 	cerr << "\t\t--nmax : number of minor-allele carriers sampled (default: 1000)\n";
 	cerr << "\t\t--region STR : calculate LD for SNPs in region (chr:start-end) \n";
 	cerr << "\t\t--snp STR : only print pairwise LD for specified SNP (chr:pos) \n";
-	cerr << "\t\t--snp-list STR : one-column file of SNPs to print pairwise LD for (chr:pos) \n";
+	cerr << "\t\t--snp-list STR : one-column file of SNPs to print pairwise LD for (chr:pos_ref/alt) \n";
 	cerr << "\t\t--epacts STR : only print pairwise LD for specified SNP (chr:pos_ref/alt)\n";
 	cerr << "\t\t--rsid STR : only print pairwise LD for specified SNP \n";
 	cerr << "\t\t--window INT : only calculate LD between SNPs within specified bp window (default: 1Mbp)\n";
