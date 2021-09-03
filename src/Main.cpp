@@ -395,7 +395,7 @@ int main (int argc, char *argv[]){
 		}
 		
 		for (int i = 0; i < sinfo.size(); i++) {
-			bool not_target = sinfo.pos[i] != target.pos && sinfo.ref[i] != target.ref && sinfo.alt[i] != target.alt;
+			bool not_target = sinfo.pos[i] != target.pos || sinfo.ref[i] != target.ref || sinfo.alt[i] != target.alt;
 			if( abs(target.pos - sinfo.pos[i]) < max_dist && not_target ){
 				getCorr(r, d, dprime, i, target.index, gdat, hdat);
 				if(  abs(r) > min_print  ){
@@ -437,7 +437,7 @@ int main (int argc, char *argv[]){
 		
 		for (int i = 0; i < sinfo.size(); i++) {
 		  for(auto it = target_vec.begin(); it < target_vec.end(); ++it ) {
-                        bool not_target = sinfo.pos[i] != it->pos && sinfo.ref[i] != it->ref && sinfo.alt[i] != it->alt; // don't check the target against itself
+                        bool not_target = sinfo.pos[i] != it->pos || sinfo.ref[i] != it->ref || sinfo.alt[i] != it->alt; // don't check the target against itself
 			if( abs(it->pos - sinfo.pos[i]) < max_dist && not_target){
 	                        // cout << it->chr + " " + std::to_string(it->pos) + " " + std::to_string(it->index) << " " << std::to_string(sinfo.pos[i]) << " " << std::to_string(not_target) << endl;
 				getCorr(r, d, dprime, i, it->index, gdat, hdat);
